@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pagos por Aula</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 90px 20px 20px;
+      background: #f4f6fb;
+      color: #1f2937;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .add-btn {
+      background: #2563eb;
+      color: white;
+      font-weight: 700;
+    }
+
+    .save-btn {
+      background: #16a34a;
+      color: white;
+      font-weight: 700;
+    }
+
+    .delete-btn {
+      background: #ef4444;
+      color: white;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #374151;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+    }
+
+    .percent-box {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      text-align: center;
+    }
+
+    .percent-label {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .percent-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1d4ed8;
+    }
+
+    .bar {
+      height: 10px;
+      width: 100%;
+      background: #dbeafe;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .status {
+      font-size: 12px;
+      font-weight: 700;
+      color: #4b5563;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding-top: 110px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Pagos por Aula</h1>
+      <div class="top-actions">
+        <span class="status" id="estado">Conectando...</span>
+        <button class="save-btn" id="btnGuardar">Guardar cambios</button>
+        <button class="add-btn" id="btnAgregar">Agregar aula</button>
+      </div>
+    </div>
+
+    <div id="aulasGrid" class="grid"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      deleteDoc,
+      onSnapshot,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD19yvqrYVNZxZ8ejLiDUf6zzy2hzmes1g",
+      authDomain: "calcprocent.firebaseapp.com",
+      projectId: "calcprocent",
+      storageBucket: "calcprocent.firebasestorage.app",
+      messagingSenderId: "517495178002",
+      appId: "1:517495178002:web:29010e7548f305a57fa9cb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const aulasRef = collection(db, "aulas");
+
+    const estado = document.getElementById("estado");
+    const grid = document.getElementById("aulasGrid");
+    const btnAgregar = document.getElementById("btnAgregar");
+    const btnGuardar = document.getElementById("btnGuardar");
+
+    let aulas = [];
+    let dirty = false;
+    let ignorarSnapshot = false;
+
+    function crearId() {
+      if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+      return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    }
+
+    function normalizarNumero(valor) {
+      if (valor === "" || valor === null || valor === undefined) return 0;
+      const n = parseInt(valor, 10);
+      return isNaN(n) || n < 0 ? 0 : n;
+    }
+
+    function porcentaje(aula) {
+      const total = normalizarNumero(aula.total);
+      const pagados = normalizarNumero(aula.pagados);
+      if (total <= 0) return 0;
+      return Math.min((pagados / total) * 100, 100);
+    }
+
+    function ordenarAulas() {
+      aulas.sort((a, b) => {
+        const diff = porcentaje(b) - porcentaje(a);
+        if (diff !== 0) return diff;
+        return (a.nombre || "").localeCompare(b.nombre || "", "es");
+      });
+    }
+
+    function escapeHtml(texto) {
+      return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function crearCard(aula, index) {
+      const pct = porcentaje(aula);
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.id = aula.id;
+
+      card.innerHTML = `
+        <div class="card-top">
+          <strong class="orden">#${index + 1}</strong>
+          <button class="delete-btn" data-action="eliminar" data-id="${aula.id}">Eliminar</button>
+        </div>
+
+        <div class="field">
+          <label>Nombre aula</label>
+          <input type="text" value="${escapeHtml(aula.nombre || "")}" data-campo="nombre" data-id="${aula.id}">
+        </div>
+
+        <div class="field">
+          <label>Niños total</label>
+          <input type="number" min="0" value="${normalizarNumero(aula.total)}" data-campo="total" data-id="${aula.id}">
+        </div>
+
+        <div class="field">
+          <label>Niños pagan</label>
+          <input type="number" min="0" value="${normalizarNumero(aula.pagados)}" data-campo="pagados" data-id="${aula.id}">
+        </div>
+
+        <div class="percent-box">
+          <div class="percent-label">Porcentaje pago</div>
+          <div class="percent-value">${pct.toFixed(1)}%</div>
+          <div class="bar">
+            <div class="fill" style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function render() {
+      ordenarAulas();
+      grid.innerHTML = "";
+
+      aulas.forEach((aula, index) => {
+        grid.appendChild(crearCard(aula, index));
+      });
+    }
+
+    function actualizarVisualCard(card, aula) {
+      const pct = porcentaje(aula);
+      const valorPct = card.querySelector(".percent-value");
+      const fill = card.querySelector(".fill");
+
+      if (valorPct) valorPct.textContent = `${pct.toFixed(1)}%`;
+      if (fill) fill.style.width = `${pct}%`;
+    }
+
+    function reordenarDOM() {
+      ordenarAulas();
+
+      const cards = new Map();
+      [...grid.children].forEach(card => {
+        cards.set(card.dataset.id, card);
+      });
+
+      aulas.forEach((aula, index) => {
+        const card = cards.get(aula.id);
+        if (!card) return;
+
+        const orden = card.querySelector(".orden");
+        if (orden) orden.textContent = `#${index + 1}`;
+        grid.appendChild(card);
+      });
+    }
+
+    function setDirty(valor) {
+      dirty = valor;
+      if (dirty) {
+        estado.textContent = "Cambios sin guardar";
+      } else {
+        estado.textContent = "Conectado";
+      }
+    }
+
+    async function guardarAula(aula) {
+      const total = normalizarNumero(aula.total);
+      const pagados = Math.min(normalizarNumero(aula.pagados), total);
+
+      const data = {
+        id: aula.id,
+        nombre: aula.nombre || "",
+        total,
+        pagados,
+        updatedAt: Date.now()
+      };
+
+      await setDoc(doc(db, "aulas", aula.id), data);
+    }
+
+    async function guardarTodo() {
+      try {
+        btnGuardar.disabled = true;
+        estado.textContent = "Guardando...";
+        ignorarSnapshot = true;
+
+        const totalActual = new Set(aulas.map(a => a.id));
+        const snapshot = await getDocs(aulasRef);
+        const docsRemotos = snapshot.docs.map(d => d.id);
+
+        for (const aula of aulas) {
+          aula.total = normalizarNumero(aula.total);
+          aula.pagados = Math.min(normalizarNumero(aula.pagados), aula.total);
+          await guardarAula(aula);
+        }
+
+        for (const idRemoto of docsRemotos) {
+          if (!totalActual.has(idRemoto)) {
+            await deleteDoc(doc(db, "aulas", idRemoto));
+          }
+        }
+
+        setDirty(false);
+        estado.textContent = "Guardado";
+        render();
+      } catch {
+        estado.textContent = "Error guardando";
+      } finally {
+        btnGuardar.disabled = false;
+        setTimeout(() => {
+          ignorarSnapshot = false;
+        }, 300);
+      }
+    }
+
+    function agregarAulaLocal() {
+      aulas.push({
+        id: crearId(),
+        nombre: `Aula ${aulas.length + 1}`,
+        total: 0,
+        pagados: 0
+      });
+      render();
+      setDirty(true);
+    }
+
+    function eliminarAulaLocal(id) {
+      aulas = aulas.filter(aula => aula.id !== id);
+      render();
+      setDirty(true);
+    }
+
+    btnAgregar.addEventListener("click", agregarAulaLocal);
+    btnGuardar.addEventListener("click", guardarTodo);
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-action='eliminar']");
+      if (!btn) return;
+      eliminarAulaLocal(btn.dataset.id);
+    });
+
+    document.addEventListener("input", (e) => {
+      const input = e.target;
+      if (input.tagName !== "INPUT") return;
+
+      const id = input.dataset.id;
+      const campo = input.dataset.campo;
+      if (!id || !campo) return;
+
+      const aula = aulas.find(a => a.id === id);
+      if (!aula) return;
+
+      if (campo === "nombre") {
+        aula.nombre = input.value;
+      } else {
+        aula[campo] = normalizarNumero(input.value);
+
+        if (aula.pagados > aula.total) {
+          aula.pagados = aula.total;
+          const pagadosInput = document.querySelector(`input[data-id="${id}"][data-campo="pagados"]`);
+          if (pagadosInput && pagadosInput !== input) {
+            pagadosInput.value = aula.pagados;
+          }
+        }
+      }
+
+      const card = input.closest(".card");
+      if (card) actualizarVisualCard(card, aula);
+
+      setDirty(true);
+    });
+
+    document.addEventListener("change", (e) => {
+      const input = e.target;
+      if (input.tagName !== "INPUT") return;
+
+      const id = input.dataset.id;
+      const campo = input.dataset.campo;
+      if (!id || !campo) return;
+
+      const aula = aulas.find(a => a.id === id);
+      if (!aula) return;
+
+      if (campo !== "nombre") {
+        input.value = aula[campo];
+      }
+
+      const card = input.closest(".card");
+      if (card) actualizarVisualCard(card, aula);
+
+      reordenarDOM();
+    });
+
+    onSnapshot(
+      aulasRef,
+      async (snapshot) => {
+        if (ignorarSnapshot || dirty) return;
+
+        const data = snapshot.docs.map(docSnap => {
+          const d = docSnap.data();
+          return {
+            id: d.id || docSnap.id,
+            nombre: d.nombre || "",
+            total: normalizarNumero(d.total),
+            pagados: normalizarNumero(d.pagados)
+          };
+        });
+
+        if (data.length === 0) {
+          aulas = [
+            { id: crearId(), nombre: "Aula A", total: 20, pagados: 15 },
+            { id: crearId(), nombre: "Aula B", total: 18, pagados: 10 },
+            { id: crearId(), nombre: "Aula C", total: 25, pagados: 23 }
+          ];
+          render();
+          estado.textContent = "Sin datos";
+          return;
+        }
+
+        aulas = data;
+        render();
+        estado.textContent = "Conectado";
+      },
+      () => {
+        estado.textContent = "Error conexión";
+      }
+    );
+  </script>
+</body>
+</html>
