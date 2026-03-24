@@ -10,57 +10,116 @@
       font-family: Arial, sans-serif;
     }
 
+    :root {
+      --bg: #4f8bd6;
+      --navy: #1c3568;
+      --yellow: #f4c313;
+      --white: #f3f3f3;
+      --blue2: #2d65ea;
+      --soft: rgba(255,255,255,0.18);
+    }
+
     body {
       margin: 0;
-      padding: 90px 20px 20px;
-      background: #f4f6fb;
+      padding: 24px 18px 20px;
+      background: var(--bg);
       color: #1f2937;
     }
 
     .wrap {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
     }
 
     .topbar {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
+      position: relative;
+      min-height: 90px;
+      margin-bottom: 20px;
     }
 
-    .top-actions {
+    .title-block {
+      width: 100%;
       display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
+      justify-content: center;
+      pointer-events: none;
     }
 
     h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 58px;
+      line-height: 0.95;
+      font-weight: 900;
+      color: var(--yellow);
+      text-shadow: 0 6px 0 rgba(0,0,0,0.28);
+      text-align: center;
+    }
+
+    .top-actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .global-box {
+      background: var(--soft);
+      color: white;
+      border-radius: 20px;
+      padding: 10px 16px;
+      min-width: 185px;
+      min-height: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .global-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+      opacity: 0.95;
+      text-align: center;
+      width: 100%;
+    }
+
+    .global-value {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+      width: 100%;
     }
 
     button {
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 10px 14px;
       font-size: 14px;
       cursor: pointer;
+      font-weight: 800;
     }
 
-    .add-btn {
+    .edit-btn {
       background: #2563eb;
       color: white;
-      font-weight: 700;
     }
 
     .save-btn {
       background: #16a34a;
       color: white;
-      font-weight: 700;
+    }
+
+    .add-btn {
+      background: #0f766e;
+      color: white;
     }
 
     .delete-btn {
@@ -71,13 +130,24 @@
       font-weight: 700;
     }
 
+    .status {
+      font-size: 12px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
     }
 
-    .card {
+    .card,
+    .view-card {
       background: white;
       border-radius: 16px;
       padding: 16px;
@@ -85,7 +155,8 @@
       border: 1px solid #e5e7eb;
     }
 
-    .card-top {
+    .card-top,
+    .view-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -118,7 +189,8 @@
       border-color: #2563eb;
     }
 
-    .percent-box {
+    .percent-box,
+    .view-percent-box {
       margin-top: 12px;
       padding: 14px;
       border-radius: 14px;
@@ -127,19 +199,22 @@
       text-align: center;
     }
 
-    .percent-label {
+    .percent-label,
+    .view-percent-label {
       font-size: 12px;
       font-weight: 700;
       margin-bottom: 6px;
     }
 
-    .percent-value {
+    .percent-value,
+    .view-percent-value {
       font-size: 28px;
       font-weight: 800;
       color: #1d4ed8;
     }
 
-    .bar {
+    .bar,
+    .view-bar {
       height: 10px;
       width: 100%;
       background: #dbeafe;
@@ -148,26 +223,249 @@
       margin-top: 10px;
     }
 
-    .fill {
+    .fill,
+    .view-fill {
       height: 100%;
       background: linear-gradient(90deg, #2563eb, #60a5fa);
       width: 0%;
       transition: width 0.25s ease;
     }
 
-    .status {
-      font-size: 12px;
-      font-weight: 700;
-      color: #4b5563;
+    .view-data {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
     }
 
-    @media (max-width: 640px) {
-      body {
-        padding-top: 110px;
+    .view-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f9fafb;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0 0 16px;
+      color: white;
+    }
+
+    .podio-wrap {
+      max-width: 860px;
+      margin: 0 auto 28px;
+    }
+
+    .podio-panel {
+      padding: 4px 0 0;
+    }
+
+    .podio-stage {
+      position: relative;
+      width: 100%;
+      max-width: 620px;
+      height: 300px;
+      margin: 0 auto 18px;
+    }
+
+    .block {
+      position: absolute;
+      bottom: 54px;
+      background: #213f7f;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    }
+
+    .block.rank3 {
+      left: 9%;
+      width: 24%;
+      height: 62px;
+      border-radius: 22px;
+      font-size: 30px;
+    }
+
+    .block.rank2 {
+      left: 30%;
+      width: 24%;
+      height: 100px;
+      border-radius: 22px 22px 0 0;
+      font-size: 42px;
+    }
+
+    .block.rank1 {
+      left: 51%;
+      width: 26%;
+      height: 164px;
+      border-radius: 22px 22px 22px 22px;
+      font-size: 76px;
+    }
+
+    .podio-name {
+      position: absolute;
+      width: 20%;
+      border-radius: 13px;
+      text-align: center;
+      color: var(--navy);
+      font-weight: 900;
+      background-color: lightblue;
+      align-items: center;
+      height: 40px;
+        display: grid;
+  place-items: center;
+      font-size: 22px;
+      line-height: 1.05;
+      word-break: break-word;
+    }
+
+    .name3 { left: 9%; bottom: 132px; }
+    .name2 { left: 30%; bottom: 176px; }
+    .name1 { left: 52%; bottom: 240px; width: 24%; }
+
+    .podio-meta {
+      position: absolute;
+      bottom: 0;
+      text-align: center;
+      color: var(--navy);
+      font-weight: 900;
+    }
+
+    .podio-meta .pct {
+      font-size: 20px;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .meta3 { left: 9%; width: 24%; }
+    .meta2 { left: 30%; width: 24%; }
+    .meta1 { left: 52%; width: 24%; }
+
+    .rest-box {
+      background: rgba(255,255,255,0.92);
+      border-radius: 34px 34px 0 0;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px 22px 22px 24px;
+      color: var(--navy);
+    }
+
+    .rest-title {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .rest-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rest-row {
+      display: grid;
+      grid-template-columns: 44px 120px 1fr 92px;
+      align-items: center;
+      gap: 10px;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .rest-rank {
+      text-align: left;
+    }
+
+    .rest-name {
+      text-align: left;
+      padding-left: 2px;
+    }
+
+    .rest-bar-wrap {
+      height: 14px;
+      background: rgba(28,53,104,0.14);
+      border-radius: 999px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .rest-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #214086, #2d65ea);
+      border-radius: 999px;
+      width: 0%;
+    }
+
+    .rest-pct {
+      text-align: right;
+    }
+
+    @media (max-width: 1100px) {
+      .topbar {
+        min-height: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
       }
 
+      .top-actions {
+        position: static;
+        justify-content: center;
+      }
+
+      .title-block {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 700px) {
       h1 {
+        font-size: 40px;
+      }
+
+      body {
+        padding: 20px 12px;
+      }
+
+      .podio-stage {
+        height: 240px;
+      }
+
+      .block.rank3 {
+        font-size: 22px;
+      }
+
+      .block.rank2 {
+        font-size: 32px;
+      }
+
+      .block.rank1 {
+        font-size: 56px;
+      }
+
+      .podio-name {
+        font-size: 14px;
+      }
+
+      .name3 { bottom: 118px; }
+      .name2 { bottom: 154px; }
+      .name1 { bottom: 208px; }
+
+      .podio-meta .pct {
         font-size: 20px;
+      }
+
+      .rest-box {
+        padding: 16px 14px 20px;
+      }
+
+      .rest-row {
+        grid-template-columns: 34px 85px 1fr 62px;
+        gap: 8px;
+        font-size: 15px;
       }
     }
   </style>
@@ -175,15 +473,46 @@
 <body>
   <div class="wrap">
     <div class="topbar">
-      <h1>Pagos por Aula</h1>
+      <div class="title-block">
+        <h1>Salones<br>en el Podio</h1>
+      </div>
+
       <div class="top-actions">
-        <span class="status" id="estado">Conectando...</span>
-        <button class="save-btn" id="btnGuardar">Guardar cambios</button>
-        <button class="add-btn" id="btnAgregar">Agregar aula</button>
+        <div class="global-box">
+          <div class="global-label">Pago total</div>
+          <div class="global-value" id="totalPagoGeneral">0.0%</div>
+        </div>
+
+        <span class="status" id="estado">Conectado</span>
+        <button class="edit-btn" id="btnEditar">Editar</button>
+        <button class="save-btn hidden" id="btnGuardar">Guardar</button>
+        <button class="add-btn hidden" id="btnAgregar">Agregar aula</button>
       </div>
     </div>
 
-    <div id="aulasGrid" class="grid"></div>
+    <div id="pantallaVista">
+      <div class="podio-wrap">
+        <div class="podio-panel">
+          <div class="podio-stage" id="podioStage"></div>
+          <div class="rest-box">
+            <div class="rest-title">Siguientes puestos</div>
+            <div class="rest-list" id="restList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="section-title">Aulas</h2>
+        <div id="vistaGrid" class="grid"></div>
+      </div>
+    </div>
+
+    <div id="pantallaEdicion" class="hidden">
+      <div>
+        <h2 class="section-title">Edición</h2>
+        <div id="aulasGrid" class="grid"></div>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -213,12 +542,23 @@
 
     const estado = document.getElementById("estado");
     const grid = document.getElementById("aulasGrid");
-    const btnAgregar = document.getElementById("btnAgregar");
+    const vistaGrid = document.getElementById("vistaGrid");
+    const podioStage = document.getElementById("podioStage");
+    const restList = document.getElementById("restList");
+    const totalPagoGeneral = document.getElementById("totalPagoGeneral");
+
+    const btnEditar = document.getElementById("btnEditar");
     const btnGuardar = document.getElementById("btnGuardar");
+    const btnAgregar = document.getElementById("btnAgregar");
+
+    const pantallaVista = document.getElementById("pantallaVista");
+    const pantallaEdicion = document.getElementById("pantallaEdicion");
 
     let aulas = [];
+    let snapshotAulas = [];
     let dirty = false;
     let ignorarSnapshot = false;
+    let enEdicion = false;
 
     function crearId() {
       if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -233,13 +573,24 @@
 
     function porcentaje(aula) {
       const total = normalizarNumero(aula.total);
-      const pagados = normalizarNumero(aula.pagados);
+      const pagados = Math.min(normalizarNumero(aula.pagados), total);
       if (total <= 0) return 0;
       return Math.min((pagados / total) * 100, 100);
     }
 
-    function ordenarAulas() {
-      aulas.sort((a, b) => {
+    function porcentajeGeneral(lista) {
+      const total = lista.reduce((sum, aula) => sum + normalizarNumero(aula.total), 0);
+      const pagados = lista.reduce((sum, aula) => {
+        const t = normalizarNumero(aula.total);
+        return sum + Math.min(normalizarNumero(aula.pagados), t);
+      }, 0);
+
+      if (total <= 0) return 0;
+      return (pagados / total) * 100;
+    }
+
+    function ordenarLista(lista) {
+      return [...lista].sort((a, b) => {
         const diff = porcentaje(b) - porcentaje(a);
         if (diff !== 0) return diff;
         return (a.nombre || "").localeCompare(b.nombre || "", "es");
@@ -255,7 +606,33 @@
         .replace(/'/g, "&#039;");
     }
 
-    function crearCard(aula, index) {
+    function setDirty(valor) {
+      dirty = valor;
+      estado.textContent = dirty ? "Cambios sin guardar" : "Conectado";
+    }
+
+    function setModoEdicion(valor) {
+      enEdicion = valor;
+
+      pantallaVista.classList.toggle("hidden", valor);
+      pantallaEdicion.classList.toggle("hidden", !valor);
+
+      btnEditar.classList.toggle("hidden", valor);
+      btnGuardar.classList.toggle("hidden", !valor);
+      btnAgregar.classList.toggle("hidden", !valor);
+
+      if (valor) {
+        renderEdicion();
+        estado.textContent = dirty ? "Cambios sin guardar" : "Editando";
+      } else {
+        aulas = snapshotAulas.map(a => ({ ...a }));
+        dirty = false;
+        renderVista();
+        estado.textContent = "Conectado";
+      }
+    }
+
+    function crearCardEdicion(aula, index) {
       const pct = porcentaje(aula);
 
       const card = document.createElement("div");
@@ -295,13 +672,111 @@
       return card;
     }
 
-    function render() {
-      ordenarAulas();
+    function crearCardVista(aula, index) {
+      const pct = porcentaje(aula);
+
+      const card = document.createElement("div");
+      card.className = "view-card";
+
+      card.innerHTML = `
+        <div class="view-top">
+          <strong>#${index + 1}</strong>
+          <strong>${escapeHtml(aula.nombre || "")}</strong>
+        </div>
+
+        <div class="view-data">
+          <div class="view-row">
+            <span>Niños total</span>
+            <strong>${normalizarNumero(aula.total)}</strong>
+          </div>
+          <div class="view-row">
+            <span>Niños pagan</span>
+            <strong>${Math.min(normalizarNumero(aula.pagados), normalizarNumero(aula.total))}</strong>
+          </div>
+        </div>
+
+        <div class="view-percent-box">
+          <div class="view-percent-label">Porcentaje pago</div>
+          <div class="view-percent-value">${pct.toFixed(1)}%</div>
+          <div class="view-bar">
+            <div class="view-fill" style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function renderEdicion() {
+      const ordenadas = ordenarLista(aulas);
       grid.innerHTML = "";
 
-      aulas.forEach((aula, index) => {
-        grid.appendChild(crearCard(aula, index));
+      ordenadas.forEach((aula, index) => {
+        grid.appendChild(crearCardEdicion(aula, index));
       });
+    }
+
+    function renderVista() {
+      const ordenadas = ordenarLista(snapshotAulas);
+      vistaGrid.innerHTML = "";
+
+      ordenadas.forEach((aula, index) => {
+        vistaGrid.appendChild(crearCardVista(aula, index));
+      });
+
+      totalPagoGeneral.textContent = `${porcentajeGeneral(snapshotAulas).toFixed(1)}%`;
+      renderPodioFormato(ordenadas);
+    }
+
+    function renderPodioFormato(listaOrdenada) {
+      const top3 = [listaOrdenada[2], listaOrdenada[1], listaOrdenada[0]];
+      const clases = ["rank3", "rank2", "rank1"];
+      const metas = ["meta3", "meta2", "meta1"];
+      const names = ["name3", "name2", "name1"];
+
+      podioStage.innerHTML = "";
+
+      top3.forEach((aula, i) => {
+        const rankNum = 3 - i;
+
+        const nombre = document.createElement("div");
+        nombre.className = `podio-name ${names[i]}`;
+        nombre.textContent = aula ? aula.nombre || "" : "";
+        podioStage.appendChild(nombre);
+
+        const bloque = document.createElement("div");
+        bloque.className = `block ${clases[i]}`;
+        bloque.textContent = rankNum;
+        podioStage.appendChild(bloque);
+
+        const meta = document.createElement("div");
+        meta.className = `podio-meta ${metas[i]}`;
+        meta.innerHTML = `
+          <div class="pct">${aula ? porcentaje(aula).toFixed(1) : "0.0"}%</div>
+        `;
+        podioStage.appendChild(meta);
+      });
+
+      const restantes = listaOrdenada.slice(3, 7);
+      restList.innerHTML = "";
+
+      for (let i = 0; i < 4; i++) {
+        const aula = restantes[i];
+        const puesto = i + 4;
+        const pct = aula ? porcentaje(aula) : 0;
+
+        const row = document.createElement("div");
+        row.className = "rest-row";
+        row.innerHTML = `
+          <div class="rest-rank">${puesto}.</div>
+          <div class="rest-name">${aula ? escapeHtml(aula.nombre || "") : ""}</div>
+          <div class="rest-bar-wrap">
+            <div class="rest-bar" style="width:${pct}%"></div>
+          </div>
+          <div class="rest-pct">${aula ? `${pct.toFixed(1)}%` : "%"}</div>
+        `;
+        restList.appendChild(row);
+      }
     }
 
     function actualizarVisualCard(card, aula) {
@@ -313,15 +788,15 @@
       if (fill) fill.style.width = `${pct}%`;
     }
 
-    function reordenarDOM() {
-      ordenarAulas();
-
+    function reordenarDOMEdicion() {
+      const ordenadas = ordenarLista(aulas);
       const cards = new Map();
+
       [...grid.children].forEach(card => {
         cards.set(card.dataset.id, card);
       });
 
-      aulas.forEach((aula, index) => {
+      ordenadas.forEach((aula, index) => {
         const card = cards.get(aula.id);
         if (!card) return;
 
@@ -329,15 +804,6 @@
         if (orden) orden.textContent = `#${index + 1}`;
         grid.appendChild(card);
       });
-    }
-
-    function setDirty(valor) {
-      dirty = valor;
-      if (dirty) {
-        estado.textContent = "Cambios sin guardar";
-      } else {
-        estado.textContent = "Conectado";
-      }
     }
 
     async function guardarAula(aula) {
@@ -361,7 +827,7 @@
         estado.textContent = "Guardando...";
         ignorarSnapshot = true;
 
-        const totalActual = new Set(aulas.map(a => a.id));
+        const idsLocales = new Set(aulas.map(a => a.id));
         const snapshot = await getDocs(aulasRef);
         const docsRemotos = snapshot.docs.map(d => d.id);
 
@@ -372,14 +838,16 @@
         }
 
         for (const idRemoto of docsRemotos) {
-          if (!totalActual.has(idRemoto)) {
+          if (!idsLocales.has(idRemoto)) {
             await deleteDoc(doc(db, "aulas", idRemoto));
           }
         }
 
-        setDirty(false);
+        snapshotAulas = aulas.map(a => ({ ...a }));
+        renderVista();
+        dirty = false;
         estado.textContent = "Guardado";
-        render();
+        setModoEdicion(false);
       } catch {
         estado.textContent = "Error guardando";
       } finally {
@@ -397,26 +865,34 @@
         total: 0,
         pagados: 0
       });
-      render();
+      renderEdicion();
       setDirty(true);
     }
 
     function eliminarAulaLocal(id) {
       aulas = aulas.filter(aula => aula.id !== id);
-      render();
+      renderEdicion();
       setDirty(true);
     }
 
-    btnAgregar.addEventListener("click", agregarAulaLocal);
+    btnEditar.addEventListener("click", () => {
+      aulas = snapshotAulas.map(a => ({ ...a }));
+      setModoEdicion(true);
+    });
+
     btnGuardar.addEventListener("click", guardarTodo);
+    btnAgregar.addEventListener("click", agregarAulaLocal);
 
     document.addEventListener("click", (e) => {
+      if (!enEdicion) return;
       const btn = e.target.closest("[data-action='eliminar']");
       if (!btn) return;
       eliminarAulaLocal(btn.dataset.id);
     });
 
     document.addEventListener("input", (e) => {
+      if (!enEdicion) return;
+
       const input = e.target;
       if (input.tagName !== "INPUT") return;
 
@@ -448,6 +924,8 @@
     });
 
     document.addEventListener("change", (e) => {
+      if (!enEdicion) return;
+
       const input = e.target;
       if (input.tagName !== "INPUT") return;
 
@@ -465,13 +943,13 @@
       const card = input.closest(".card");
       if (card) actualizarVisualCard(card, aula);
 
-      reordenarDOM();
+      reordenarDOMEdicion();
     });
 
     onSnapshot(
       aulasRef,
-      async (snapshot) => {
-        if (ignorarSnapshot || dirty) return;
+      (snapshot) => {
+        if (ignorarSnapshot || enEdicion) return;
 
         const data = snapshot.docs.map(docSnap => {
           const d = docSnap.data();
@@ -484,18 +962,19 @@
         });
 
         if (data.length === 0) {
-          aulas = [
+          snapshotAulas = [
             { id: crearId(), nombre: "Aula A", total: 20, pagados: 15 },
             { id: crearId(), nombre: "Aula B", total: 18, pagados: 10 },
             { id: crearId(), nombre: "Aula C", total: 25, pagados: 23 }
           ];
-          render();
+          totalPagoGeneral.textContent = `${porcentajeGeneral(snapshotAulas).toFixed(1)}%`;
+          renderVista();
           estado.textContent = "Sin datos";
           return;
         }
 
-        aulas = data;
-        render();
+        snapshotAulas = data.map(a => ({ ...a }));
+        renderVista();
         estado.textContent = "Conectado";
       },
       () => {
