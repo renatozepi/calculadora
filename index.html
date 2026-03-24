@@ -17,6 +17,7 @@
       --white: #f3f3f3;
       --blue2: #2d65ea;
       --soft: rgba(255,255,255,0.18);
+      --namebox: #8fc0ff;
     }
 
     body {
@@ -54,6 +55,12 @@
       text-align: center;
     }
 
+    .top-left-box {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
     .top-actions {
       position: absolute;
       top: 0;
@@ -65,9 +72,15 @@
       justify-content: flex-end;
     }
 
-    .global-box {
+    .mobile-top-boxes,
+    .mobile-bottom-actions {
+      display: none;
+    }
+
+    .global-box,
+    .cutoff-box {
       background: var(--soft);
-      color: white;
+      color: rgb(4, 4, 93);
       border-radius: 20px;
       padding: 10px 16px;
       min-width: 185px;
@@ -80,7 +93,8 @@
       backdrop-filter: blur(2px);
     }
 
-    .global-label {
+    .global-label,
+    .cutoff-label {
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 0.3px;
@@ -90,7 +104,8 @@
       width: 100%;
     }
 
-    .global-value {
+    .global-value,
+    .cutoff-value {
       font-size: 34px;
       font-weight: 900;
       line-height: 1;
@@ -303,26 +318,44 @@
       left: 51%;
       width: 26%;
       height: 164px;
-      border-radius: 22px 22px 22px 22px;
+      border-radius: 22px;
       font-size: 76px;
     }
 
     .podio-name {
       position: absolute;
-      width: 20%;
-      border-radius: 13px;
+      width: 125px;
       text-align: center;
       color: var(--navy);
       font-weight: 900;
-      background-color: lightblue;
-      align-items: center;
-      height: 40px;
-        display: grid;
-  place-items: center;
       font-size: 22px;
       line-height: 1.05;
       word-break: break-word;
+      background: var(--namebox);
+      border-radius: 16px;
+      padding: 8px 10px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
     }
+    @media (max-width: 700px) {
+     .podio-name {
+      position: absolute;
+      width: 75px;
+      text-align: center;
+      color: var(--navy);
+      font-weight: 900;
+      font-size: 22px;
+      line-height: 1.05;
+      word-break: break-word;
+      background: var(--namebox);
+      border-radius: 16px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);}
+           .podio-name.name1 {
+
+      margin-bottom: 20px;
+
+    }}
 
     .name3 { left: 9%; bottom: 132px; }
     .name2 { left: 30%; bottom: 176px; }
@@ -337,7 +370,7 @@
     }
 
     .podio-meta .pct {
-      font-size: 20px;
+      font-size: 27px;
       line-height: 1;
       margin-bottom: 20px;
     }
@@ -411,27 +444,74 @@
         gap: 12px;
       }
 
-      .top-actions {
-        position: static;
-        justify-content: center;
+      .title-block {
+        order: 1;
+        margin-bottom: 20px;
       }
 
-      .title-block {
+      .top-left-box,
+      .top-actions {
+        position: static;
+        width: 100%;
+        display: flex;
         justify-content: center;
       }
     }
 
     @media (max-width: 700px) {
+      body {
+        padding: 18px 12px 20px;
+      }
+
+      .topbar {
+        margin-bottom: 14px;
+      }
+
+      .top-left-box,
+      .top-actions {
+        display: none;
+      }
+
+      .mobile-top-boxes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .mobile-bottom-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .title-block {
+        width: 100%;
+      }
+
       h1 {
         font-size: 40px;
       }
 
-      body {
-        padding: 20px 12px;
+      .global-box,
+      .cutoff-box {
+        min-width: 0;
+        width: 100%;
+        min-height: 66px;
+        padding: 10px 12px;
+      }
+
+      .global-value,
+      .cutoff-value {
+        font-size: 28px;
       }
 
       .podio-stage {
         height: 240px;
+        margin-left: 20px;
       }
 
       .block.rank3 {
@@ -447,7 +527,9 @@
       }
 
       .podio-name {
-        font-size: 14px;
+        font-size: 13px;
+        padding: 6px 8px;
+        border-radius: 12px;
       }
 
       .name3 { bottom: 118px; }
@@ -473,6 +555,24 @@
 <body>
   <div class="wrap">
     <div class="topbar">
+      <div class="mobile-top-boxes">
+        <div class="cutoff-box">
+          <div class="cutoff-label">Días para el corte</div>
+          <div class="cutoff-value" id="diasCorteMobile">0</div>
+        </div>
+        <div class="global-box">
+          <div class="global-label">Pago total</div>
+          <div class="global-value" id="totalPagoGeneralMobile">0.0%</div>
+        </div>
+      </div>
+
+      <div class="top-left-box">
+        <div class="cutoff-box">
+          <div class="cutoff-label">Días para el corte</div>
+          <div class="cutoff-value" id="diasCorte">0</div>
+        </div>
+      </div>
+
       <div class="title-block">
         <h1>Salones<br>en el Podio</h1>
       </div>
@@ -497,6 +597,13 @@
           <div class="rest-box">
             <div class="rest-title">Siguientes puestos</div>
             <div class="rest-list" id="restList"></div>
+          </div>
+
+          <div class="mobile-bottom-actions">
+            <span class="status" id="estadoMobile">Conectado</span>
+            <button class="edit-btn" id="btnEditarMobile">Editar</button>
+            <button class="save-btn hidden" id="btnGuardarMobile">Guardar</button>
+            <button class="add-btn hidden" id="btnAgregarMobile">Agregar aula</button>
           </div>
         </div>
       </div>
@@ -541,15 +648,22 @@
     const aulasRef = collection(db, "aulas");
 
     const estado = document.getElementById("estado");
+    const estadoMobile = document.getElementById("estadoMobile");
     const grid = document.getElementById("aulasGrid");
     const vistaGrid = document.getElementById("vistaGrid");
     const podioStage = document.getElementById("podioStage");
     const restList = document.getElementById("restList");
     const totalPagoGeneral = document.getElementById("totalPagoGeneral");
+    const totalPagoGeneralMobile = document.getElementById("totalPagoGeneralMobile");
+    const diasCorte = document.getElementById("diasCorte");
+    const diasCorteMobile = document.getElementById("diasCorteMobile");
 
     const btnEditar = document.getElementById("btnEditar");
     const btnGuardar = document.getElementById("btnGuardar");
     const btnAgregar = document.getElementById("btnAgregar");
+    const btnEditarMobile = document.getElementById("btnEditarMobile");
+    const btnGuardarMobile = document.getElementById("btnGuardarMobile");
+    const btnAgregarMobile = document.getElementById("btnAgregarMobile");
 
     const pantallaVista = document.getElementById("pantallaVista");
     const pantallaEdicion = document.getElementById("pantallaEdicion");
@@ -589,6 +703,38 @@
       return (pagados / total) * 100;
     }
 
+    function calcularDiasParaCorte() {
+      const hoy = new Date();
+      const anio = hoy.getFullYear();
+      const mes = hoy.getMonth();
+      const dia = hoy.getDate();
+
+      let objetivo;
+
+      if (dia < 3) {
+        objetivo = new Date(anio, mes, 3);
+      } else if (dia === 3) {
+        objetivo = new Date(anio, mes + 1, 3);
+      } else {
+        objetivo = new Date(anio, mes + 1, 3);
+      }
+
+      const inicioHoy = new Date(anio, mes, dia);
+      const diferenciaMs = objetivo - inicioHoy;
+      return Math.round(diferenciaMs / 86400000);
+    }
+
+    function actualizarDiasCorte() {
+      const valor = calcularDiasParaCorte();
+      diasCorte.textContent = valor;
+      diasCorteMobile.textContent = valor;
+    }
+
+    function setEstado(texto) {
+      estado.textContent = texto;
+      estadoMobile.textContent = texto;
+    }
+
     function ordenarLista(lista) {
       return [...lista].sort((a, b) => {
         const diff = porcentaje(b) - porcentaje(a);
@@ -608,7 +754,7 @@
 
     function setDirty(valor) {
       dirty = valor;
-      estado.textContent = dirty ? "Cambios sin guardar" : "Conectado";
+      setEstado(dirty ? "Cambios sin guardar" : "Conectado");
     }
 
     function setModoEdicion(valor) {
@@ -621,14 +767,18 @@
       btnGuardar.classList.toggle("hidden", !valor);
       btnAgregar.classList.toggle("hidden", !valor);
 
+      btnEditarMobile.classList.toggle("hidden", valor);
+      btnGuardarMobile.classList.toggle("hidden", !valor);
+      btnAgregarMobile.classList.toggle("hidden", !valor);
+
       if (valor) {
         renderEdicion();
-        estado.textContent = dirty ? "Cambios sin guardar" : "Editando";
+        setEstado(dirty ? "Cambios sin guardar" : "Editando");
       } else {
         aulas = snapshotAulas.map(a => ({ ...a }));
         dirty = false;
         renderVista();
-        estado.textContent = "Conectado";
+        setEstado("Conectado");
       }
     }
 
@@ -724,7 +874,10 @@
         vistaGrid.appendChild(crearCardVista(aula, index));
       });
 
-      totalPagoGeneral.textContent = `${porcentajeGeneral(snapshotAulas).toFixed(1)}%`;
+      const total = `${porcentajeGeneral(snapshotAulas).toFixed(1)}%`;
+      totalPagoGeneral.textContent = total;
+      totalPagoGeneralMobile.textContent = total;
+      actualizarDiasCorte();
       renderPodioFormato(ordenadas);
     }
 
@@ -824,7 +977,8 @@
     async function guardarTodo() {
       try {
         btnGuardar.disabled = true;
-        estado.textContent = "Guardando...";
+        btnGuardarMobile.disabled = true;
+        setEstado("Guardando...");
         ignorarSnapshot = true;
 
         const idsLocales = new Set(aulas.map(a => a.id));
@@ -846,12 +1000,13 @@
         snapshotAulas = aulas.map(a => ({ ...a }));
         renderVista();
         dirty = false;
-        estado.textContent = "Guardado";
+        setEstado("Guardado");
         setModoEdicion(false);
       } catch {
-        estado.textContent = "Error guardando";
+        setEstado("Error guardando");
       } finally {
         btnGuardar.disabled = false;
+        btnGuardarMobile.disabled = false;
         setTimeout(() => {
           ignorarSnapshot = false;
         }, 300);
@@ -880,8 +1035,16 @@
       setModoEdicion(true);
     });
 
+    btnEditarMobile.addEventListener("click", () => {
+      aulas = snapshotAulas.map(a => ({ ...a }));
+      setModoEdicion(true);
+    });
+
     btnGuardar.addEventListener("click", guardarTodo);
+    btnGuardarMobile.addEventListener("click", guardarTodo);
+
     btnAgregar.addEventListener("click", agregarAulaLocal);
+    btnAgregarMobile.addEventListener("click", agregarAulaLocal);
 
     document.addEventListener("click", (e) => {
       if (!enEdicion) return;
@@ -967,20 +1130,25 @@
             { id: crearId(), nombre: "Aula B", total: 18, pagados: 10 },
             { id: crearId(), nombre: "Aula C", total: 25, pagados: 23 }
           ];
-          totalPagoGeneral.textContent = `${porcentajeGeneral(snapshotAulas).toFixed(1)}%`;
+          const total = `${porcentajeGeneral(snapshotAulas).toFixed(1)}%`;
+          totalPagoGeneral.textContent = total;
+          totalPagoGeneralMobile.textContent = total;
+          actualizarDiasCorte();
           renderVista();
-          estado.textContent = "Sin datos";
+          setEstado("Sin datos");
           return;
         }
 
         snapshotAulas = data.map(a => ({ ...a }));
         renderVista();
-        estado.textContent = "Conectado";
+        setEstado("Conectado");
       },
       () => {
-        estado.textContent = "Error conexión";
+        setEstado("Error conexión");
       }
     );
+
+    actualizarDiasCorte();
   </script>
 </body>
 </html>
