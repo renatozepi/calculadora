@@ -59,6 +59,20 @@
       position: absolute;
       top: 0;
       left: 0;
+      min-width: 360px;
+      min-height: 70px;
+    }
+
+    .desktop-toggle-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .desktop-cutoff-wrap {
+      position: absolute;
+      top: 0;
+      left: 145px;
     }
 
     .top-actions {
@@ -73,7 +87,8 @@
     }
 
     .mobile-top-boxes,
-    .mobile-bottom-actions {
+    .mobile-bottom-actions,
+    .mobile-edit-actions {
       display: none;
     }
 
@@ -134,6 +149,11 @@
 
     .add-btn {
       background: #0f766e;
+      color: white;
+    }
+
+    .toggle-needed-btn {
+      background: #1c3568;
       color: white;
     }
 
@@ -262,6 +282,36 @@
       background: #f9fafb;
     }
 
+    .needed-box {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      text-align: center;
+    }
+
+    .needed-label {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #9a3412;
+    }
+
+    .needed-value {
+      font-size: 22px;
+      font-weight: 900;
+      color: #c2410c;
+      line-height: 1.1;
+    }
+
+    .needed-note {
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 6px;
+      color: #7c2d12;
+    }
+
     .section-title {
       font-size: 18px;
       font-weight: 800;
@@ -336,26 +386,28 @@
       padding: 8px 10px;
       box-shadow: 0 6px 14px rgba(0,0,0,0.12);
     }
+
     @media (max-width: 700px) {
-     .podio-name {
-      position: absolute;
-      width: 75px;
-      text-align: center;
-      color: var(--navy);
-      font-weight: 900;
-      font-size: 22px;
-      line-height: 1.05;
-      word-break: break-word;
-      background: var(--namebox);
-      border-radius: 16px;
-      padding: 8px 10px;
-      margin-bottom: 10px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.12);}
-           .podio-name.name1 {
+      .podio-name {
+        position: absolute;
+        width: 75px;
+        text-align: center;
+        color: var(--navy);
+        font-weight: 900;
+        font-size: 22px;
+        line-height: 1.05;
+        word-break: break-word;
+        background: var(--namebox);
+        border-radius: 16px;
+        padding: 8px 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+      }
 
-      margin-bottom: 20px;
-
-    }}
+      .podio-name.name1 {
+        margin-bottom: 20px;
+      }
+    }
 
     .name3 { left: 9%; bottom: 132px; }
     .name2 { left: 30%; bottom: 176px; }
@@ -456,6 +508,19 @@
         display: flex;
         justify-content: center;
       }
+
+      .top-left-box {
+        min-width: 0;
+        min-height: auto;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .desktop-toggle-wrap,
+      .desktop-cutoff-wrap {
+        position: static;
+      }
     }
 
     @media (max-width: 700px) {
@@ -479,7 +544,8 @@
         margin-bottom: 12px;
       }
 
-      .mobile-bottom-actions {
+      .mobile-bottom-actions,
+      .mobile-edit-actions {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -567,9 +633,14 @@
       </div>
 
       <div class="top-left-box">
-        <div class="cutoff-box">
-          <div class="cutoff-label">Días para el corte</div>
-          <div class="cutoff-value" id="diasCorte">0</div>
+        <div class="desktop-toggle-wrap">
+          <button class="toggle-needed-btn" id="btnFaltantes">Ver faltantes</button>
+        </div>
+        <div class="desktop-cutoff-wrap">
+          <div class="cutoff-box">
+            <div class="cutoff-label">Días para el corte</div>
+            <div class="cutoff-value" id="diasCorte">0</div>
+          </div>
         </div>
       </div>
 
@@ -602,8 +673,7 @@
           <div class="mobile-bottom-actions">
             <span class="status" id="estadoMobile">Conectado</span>
             <button class="edit-btn" id="btnEditarMobile">Editar</button>
-            <button class="save-btn hidden" id="btnGuardarMobile">Guardar</button>
-            <button class="add-btn hidden" id="btnAgregarMobile">Agregar aula</button>
+            <button class="toggle-needed-btn" id="btnFaltantesMobile">Ver faltantes</button>
           </div>
         </div>
       </div>
@@ -618,6 +688,12 @@
       <div>
         <h2 class="section-title">Edición</h2>
         <div id="aulasGrid" class="grid"></div>
+
+        <div class="mobile-edit-actions">
+          <span class="status" id="estadoMobileEdit">Conectado</span>
+          <button class="save-btn hidden" id="btnGuardarMobile">Guardar</button>
+          <button class="add-btn hidden" id="btnAgregarMobile">Agregar aula</button>
+        </div>
       </div>
     </div>
   </div>
@@ -649,6 +725,7 @@
 
     const estado = document.getElementById("estado");
     const estadoMobile = document.getElementById("estadoMobile");
+    const estadoMobileEdit = document.getElementById("estadoMobileEdit");
     const grid = document.getElementById("aulasGrid");
     const vistaGrid = document.getElementById("vistaGrid");
     const podioStage = document.getElementById("podioStage");
@@ -664,6 +741,8 @@
     const btnEditarMobile = document.getElementById("btnEditarMobile");
     const btnGuardarMobile = document.getElementById("btnGuardarMobile");
     const btnAgregarMobile = document.getElementById("btnAgregarMobile");
+    const btnFaltantes = document.getElementById("btnFaltantes");
+    const btnFaltantesMobile = document.getElementById("btnFaltantesMobile");
 
     const pantallaVista = document.getElementById("pantallaVista");
     const pantallaEdicion = document.getElementById("pantallaEdicion");
@@ -673,6 +752,7 @@
     let dirty = false;
     let ignorarSnapshot = false;
     let enEdicion = false;
+    let mostrarFaltantes = false;
 
     function crearId() {
       if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -733,6 +813,7 @@
     function setEstado(texto) {
       estado.textContent = texto;
       estadoMobile.textContent = texto;
+      estadoMobileEdit.textContent = texto;
     }
 
     function ordenarLista(lista) {
@@ -741,6 +822,55 @@
         if (diff !== 0) return diff;
         return (a.nombre || "").localeCompare(b.nombre || "", "es");
       });
+    }
+
+    function calcularFaltantesParaSuperar(aula, lider) {
+      if (!lider) {
+        return { valor: "Sin datos", nota: "" };
+      }
+
+      if (aula.id === lider.id) {
+        return { valor: "Va ganando", nota: "" };
+      }
+
+      const total = normalizarNumero(aula.total);
+      const pagados = Math.min(normalizarNumero(aula.pagados), total);
+      const pctLider = porcentaje(lider) / 100;
+
+      if (total <= 0) {
+        return { valor: "Faltan 0 alumnos", nota: "" };
+      }
+
+      const faltan = Math.max(0, Math.floor((pctLider * total) - pagados) + 1);
+      const disponibles = Math.max(0, total - pagados);
+
+      if (faltan === 0) {
+        return { valor: "Ya lo supera", nota: "" };
+      }
+
+      if (faltan > disponibles) {
+        return {
+          valor: `Faltan ${faltan} alumnos`,
+          nota: "No alcanza con los disponibles"
+        };
+      }
+
+      return {
+        valor: `Faltan ${faltan} alumnos`,
+        nota: ""
+      };
+    }
+
+    function actualizarTextoBotonesFaltantes() {
+      const texto = mostrarFaltantes ? "Ocultar faltantes" : "Ver faltantes";
+      btnFaltantes.textContent = texto;
+      btnFaltantesMobile.textContent = texto;
+    }
+
+    function toggleFaltantes() {
+      mostrarFaltantes = !mostrarFaltantes;
+      actualizarTextoBotonesFaltantes();
+      renderVista();
     }
 
     function escapeHtml(texto) {
@@ -766,8 +896,8 @@
       btnEditar.classList.toggle("hidden", valor);
       btnGuardar.classList.toggle("hidden", !valor);
       btnAgregar.classList.toggle("hidden", !valor);
+      btnFaltantes.classList.toggle("hidden", valor);
 
-      btnEditarMobile.classList.toggle("hidden", valor);
       btnGuardarMobile.classList.toggle("hidden", !valor);
       btnAgregarMobile.classList.toggle("hidden", !valor);
 
@@ -822,8 +952,9 @@
       return card;
     }
 
-    function crearCardVista(aula, index) {
+    function crearCardVista(aula, index, lider) {
       const pct = porcentaje(aula);
+      const faltantes = calcularFaltantesParaSuperar(aula, lider);
 
       const card = document.createElement("div");
       card.className = "view-card";
@@ -852,6 +983,14 @@
             <div class="view-fill" style="width:${pct}%"></div>
           </div>
         </div>
+
+        ${mostrarFaltantes ? `
+          <div class="needed-box">
+            <div class="needed-label">Para superar al #1</div>
+            <div class="needed-value">${faltantes.valor}</div>
+            ${faltantes.nota ? `<div class="needed-note">${faltantes.nota}</div>` : ""}
+          </div>
+        ` : ""}
       `;
 
       return card;
@@ -869,9 +1008,10 @@
     function renderVista() {
       const ordenadas = ordenarLista(snapshotAulas);
       vistaGrid.innerHTML = "";
+      const lider = ordenadas[0];
 
       ordenadas.forEach((aula, index) => {
-        vistaGrid.appendChild(crearCardVista(aula, index));
+        vistaGrid.appendChild(crearCardVista(aula, index, lider));
       });
 
       const total = `${porcentajeGeneral(snapshotAulas).toFixed(1)}%`;
@@ -1046,6 +1186,9 @@
     btnAgregar.addEventListener("click", agregarAulaLocal);
     btnAgregarMobile.addEventListener("click", agregarAulaLocal);
 
+    btnFaltantes.addEventListener("click", toggleFaltantes);
+    btnFaltantesMobile.addEventListener("click", toggleFaltantes);
+
     document.addEventListener("click", (e) => {
       if (!enEdicion) return;
       const btn = e.target.closest("[data-action='eliminar']");
@@ -1148,6 +1291,7 @@
       }
     );
 
+    actualizarTextoBotonesFaltantes();
     actualizarDiasCorte();
   </script>
 </body>
