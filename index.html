@@ -721,7 +721,21 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const aulasRef = collection(db, "aulas");
+
+    function obtenerPeriodoActualLima() {
+      const partes = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Lima",
+        year: "numeric",
+        month: "2-digit"
+      }).formatToParts(new Date());
+
+      const anio = partes.find(p => p.type === "year").value;
+      const mes = partes.find(p => p.type === "month").value;
+      return `${anio}-${mes}`;
+    }
+
+    const periodoActual = obtenerPeriodoActualLima();
+    const aulasRef = collection(db, "pagos", periodoActual, "aulas");
 
     const estado = document.getElementById("estado");
     const estadoMobile = document.getElementById("estadoMobile");
@@ -1111,7 +1125,7 @@
         updatedAt: Date.now()
       };
 
-      await setDoc(doc(db, "aulas", aula.id), data);
+      await setDoc(doc(db, "pagos", periodoActual, "aulas", aula.id), data);
     }
 
     async function guardarTodo() {
@@ -1133,7 +1147,7 @@
 
         for (const idRemoto of docsRemotos) {
           if (!idsLocales.has(idRemoto)) {
-            await deleteDoc(doc(db, "aulas", idRemoto));
+            await deleteDoc(doc(db, "pagos", periodoActual, "aulas", idRemoto));
           }
         }
 
