@@ -722,37 +722,16 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const DIA_CORTE = 3;
-
-    function obtenerFechaLima() {
+    function obtenerPeriodoActualLima() {
       const partes = new Intl.DateTimeFormat("en-CA", {
         timeZone: "America/Lima",
         year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
+        month: "2-digit"
       }).formatToParts(new Date());
 
-      return {
-        anio: Number(partes.find(p => p.type === "year").value),
-        mes: Number(partes.find(p => p.type === "month").value),
-        dia: Number(partes.find(p => p.type === "day").value)
-      };
-    }
-
-    function obtenerPeriodoActualLima() {
-      const { anio, mes, dia } = obtenerFechaLima();
-      let periodoAnio = anio;
-      let periodoMes = mes;
-
-      if (dia > DIA_CORTE) {
-        periodoMes += 1;
-        if (periodoMes > 12) {
-          periodoMes = 1;
-          periodoAnio += 1;
-        }
-      }
-
-      return `${periodoAnio}-${String(periodoMes).padStart(2, "0")}`;
+      const anio = partes.find(p => p.type === "year").value;
+      const mes = partes.find(p => p.type === "month").value;
+      return `${anio}-${mes}`;
     }
 
     const periodoActual = obtenerPeriodoActualLima();
@@ -819,15 +798,24 @@
     }
 
     function calcularDiasParaCorte() {
-      const { anio, mes, dia } = obtenerFechaLima();
+      const hoy = new Date();
+      const anio = hoy.getFullYear();
+      const mes = hoy.getMonth();
+      const dia = hoy.getDate();
 
-      const inicioHoy = Date.UTC(anio, mes - 1, dia);
-      const objetivo = dia <= DIA_CORTE
-        ? Date.UTC(anio, mes - 1, DIA_CORTE)
-        : Date.UTC(anio, mes, DIA_CORTE);
+      let objetivo;
 
+      if (dia < 3) {
+        objetivo = new Date(anio, mes, 3);
+      } else if (dia === 3) {
+        objetivo = new Date(anio, mes + 1, 3);
+      } else {
+        objetivo = new Date(anio, mes + 1, 3);
+      }
+
+      const inicioHoy = new Date(anio, mes, dia);
       const diferenciaMs = objetivo - inicioHoy;
-      return Math.max(0, Math.round(diferenciaMs / 86400000));
+      return Math.round(diferenciaMs / 86400000);
     }
 
     function actualizarDiasCorte() {
