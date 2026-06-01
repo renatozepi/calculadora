@@ -723,16 +723,28 @@
     const db = getFirestore(app);
 
     function obtenerPeriodoActualLima() {
-      const partes = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "America/Lima",
-        year: "numeric",
-        month: "2-digit"
-      }).formatToParts(new Date());
+  const partes = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Lima",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
 
-      const anio = partes.find(p => p.type === "year").value;
-      const mes = partes.find(p => p.type === "month").value;
-      return `${anio}-${mes}`;
+  let anio = Number(partes.find(p => p.type === "year").value);
+  let mes = Number(partes.find(p => p.type === "month").value);
+  const dia = Number(partes.find(p => p.type === "day").value);
+
+  if (dia <= 3) {
+    mes -= 1;
+
+    if (mes === 0) {
+      mes = 12;
+      anio -= 1;
     }
+  }
+
+  return `${anio}-${String(mes).padStart(2, "0")}`;
+}
 
     const periodoActual = obtenerPeriodoActualLima();
     const aulasRef = collection(db, "pagos", periodoActual, "aulas");
